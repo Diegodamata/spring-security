@@ -60,4 +60,10 @@ public class ProductController {
         Product update = productService.update(UUID.fromString(id), productMapper.toEntity(dto));
         return ResponseEntity.ok(productMapper.toDTO(update));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable("id") String id){
+        productService.delete(UUID.fromString(id));
+        return ResponseEntity.noContent().build();
+    }
 }
