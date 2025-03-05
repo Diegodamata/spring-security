@@ -24,7 +24,9 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<Void> createProduct(@RequestBody ProductDTO dto){
-        Product entity = productService.createProduct(productMapper.toEntity(dto));
+        Product entity = productMapper.toEntity(dto);
+
+        entity = productService.createProduct(entity);
 
         URI uri = ServletUriComponentsBuilder
                     .fromCurrentRequest()
