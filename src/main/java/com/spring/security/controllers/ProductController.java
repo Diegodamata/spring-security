@@ -50,8 +50,14 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> findById(String id){
+    public ResponseEntity<ProductDTO> findById(@PathVariable("id") String id){
         Product product = productService.findById(UUID.fromString(id));
         return ResponseEntity.ok(productMapper.toDTO(product));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductDTO> update(@PathVariable("id") String id, @RequestBody ProductDTO dto){
+        Product update = productService.update(UUID.fromString(id), productMapper.toEntity(dto));
+        return ResponseEntity.ok(productMapper.toDTO(update));
     }
 }
