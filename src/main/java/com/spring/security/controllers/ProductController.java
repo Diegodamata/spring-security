@@ -11,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -46,5 +47,11 @@ public class ProductController {
                 )).toList();
 
         return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductDTO> findById(String id){
+        Product product = productService.findById(UUID.fromString(id));
+        return ResponseEntity.ok(productMapper.toDTO(product));
     }
 }
