@@ -50,6 +50,12 @@
 			<version>${org.mapstruct.version}</version>
 		</dependency>
 
+		<!-- Add dependency from spring security -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>
