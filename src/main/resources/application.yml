@@ -1,3 +1,12 @@
 spring:
   application:
     name: security
+  datasource:
+    url: jdbc:postgresql://localhost:5432/produtos
+    username: security
+    password: security
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
