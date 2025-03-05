@@ -6,6 +6,12 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -30,5 +36,25 @@ public class SecurityConfiguration {
                     authorize.anyRequest().authenticated(); //as requisições so será permitida acessar se as pessoas estiverem autenticadas
                 })
                 .build();
+    }
+
+    //um bean que retorna a senha codificada
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
+
+
+    //criando um user details service para buscar usuario no banco
+    @Bean
+    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder){
+
+        //userDetails serve para criar um usuario
+        UserDetails user1 = User.builder()
+                .username("Diego")
+                .password(passwordEncoder.encode("123"))
+                .build();
+
+        return new InMemoryUserDetailsManager(user1); //utilizando banco em memoria
     }
 }
