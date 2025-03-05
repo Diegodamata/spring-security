@@ -6,13 +6,12 @@ import com.spring.security.models.Product;
 import com.spring.security.services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/products")
@@ -35,5 +34,17 @@ public class ProductController {
                     .toUri();
 
         return ResponseEntity.created(uri).build();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ProductDTO>> getProducts(){
+        List<Product> products = productService.getProducts();
+        List<ProductDTO> dtos = products.stream()
+                .map(product -> new ProductDTO(
+                        product.getName(),
+                        product.getPrice()
+                )).toList();
+
+        return ResponseEntity.ok(dtos);
     }
 }
