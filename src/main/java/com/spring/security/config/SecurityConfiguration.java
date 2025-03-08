@@ -1,13 +1,15 @@
 package com.spring.security.config;
 
+import com.spring.security.security.CustomUserDetailsService;
+import com.spring.security.services.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity //enabling security
+@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true) //habilitando o metho securty para que eu coloque as authorize dentro do controller
 public class SecurityConfiguration {
 
     //configuração padrão que o spring fornece para autenticação
@@ -33,6 +36,7 @@ public class SecurityConfiguration {
 
 
                     authorize.requestMatchers("/login/**").permitAll(); //permitindo que todos tenha acesso ao /login
+                    authorize.requestMatchers(HttpMethod.POST, "/users/**").permitAll();
                     authorize.anyRequest().authenticated(); //as requisições so será permitida acessar se as pessoas estiverem autenticadas
                 })
                 .build();
@@ -47,14 +51,8 @@ public class SecurityConfiguration {
 
     //criando um user details service para buscar usuario no banco
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder){
+    public UserDetailsService userDetailsService(UserService userService){
 
-        //userDetails serve para criar um usuario
-        UserDetails user1 = User.builder()
-                .username("Diego")
-                .password(passwordEncoder.encode("123"))
-                .build();
-
-        return new InMemoryUserDetailsManager(user1); //utilizando banco em memoria
+        return new CustomUserDetailsService(userService); //utilizando UserDetailsService customizado, recebendo uma dependencia de service
     }
 }

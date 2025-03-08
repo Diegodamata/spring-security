@@ -29,4 +29,9 @@ public class Product {
 
     @LastModifiedDate
     private LocalDate dataAtualizacao;
+
+//
+//    @ManyToOne
+//    @JoinColumn(name = "id_user")
+//    private User user;
 }
