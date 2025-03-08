@@ -1,7 +1,9 @@
 package com.spring.security.services;
 
 import com.spring.security.models.Product;
+import com.spring.security.models.User;
 import com.spring.security.repositories.ProductRepository;
+import com.spring.security.security.SecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +15,11 @@ import java.util.UUID;
 public class ProductService {
 
     private final ProductRepository repository;
+    private final SecurityService securityService;
 
     public Product createProduct(Product entity) {
+        User user = securityService.userLogado();
+        entity.setUser(user);
         return repository.save(entity);
     }
 
