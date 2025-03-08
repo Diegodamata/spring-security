@@ -6,6 +6,7 @@ import com.spring.security.models.Product;
 import com.spring.security.services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -22,6 +23,7 @@ public class ProductController {
     private final ProductMapper productMapper;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('FUNCIONARIO', 'GERENTE')") //criando authorize no crontroller
     public ResponseEntity<Void> createProduct(@RequestBody ProductDTO dto){
         Product entity = productMapper.toEntity(dto);
 
@@ -37,6 +39,7 @@ public class ProductController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('FUNCIONARIO', 'GERENTE')")
     public ResponseEntity<List<ProductDTO>> getProducts(){
         List<Product> products = productService.getProducts();
         List<ProductDTO> dtos = products.stream()
@@ -49,18 +52,21 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('FUNCIONARIO', 'GERENTE')")
     public ResponseEntity<ProductDTO> findById(@PathVariable("id") String id){
         Product product = productService.findById(UUID.fromString(id));
         return ResponseEntity.ok(productMapper.toDTO(product));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('GERENTE')")
     public ResponseEntity<ProductDTO> update(@PathVariable("id") String id, @RequestBody ProductDTO dto){
         Product update = productService.update(UUID.fromString(id), productMapper.toEntity(dto));
         return ResponseEntity.ok(productMapper.toDTO(update));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('GERENTE')")
     public ResponseEntity<Void> delete(@PathVariable("id") String id){
         productService.delete(UUID.fromString(id));
         return ResponseEntity.noContent().build();
