@@ -71,6 +71,12 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
+		<!-- adicionando o oauth2 para se autenticar a outros servidores como google, facebook etc...-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-client</artifactId>
+		</dependency>
+
 	</dependencies>
 
 		<build>
