@@ -52,7 +52,11 @@ public class SecurityConfiguration {
 
 
     //criando um user details service para buscar usuario no banco
-    @Bean
+
+    //estou utilizando esse bean para o UserService para o contexto para buscar um usuario do banco
+    //porem dessa forma não configo fazer uma implementação com o google pois o google não retorna um tipo de user
+    //então preciso criar uma Authentication customizada com o meu user para altenticar com base no usuario
+//    @Bean
     public UserDetailsService userDetailsService(UserService userService){
 
         return new CustomUserDetailsService(userService); //utilizando UserDetailsService customizado, recebendo uma dependencia de service

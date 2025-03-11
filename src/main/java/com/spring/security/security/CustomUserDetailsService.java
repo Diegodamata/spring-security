@@ -14,6 +14,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserService userService;
 
+    //essa classe buscava um user no banco e comparava os dados debaixo dos panos, se os dados baterem
+    //ele cria uma authentication, porem agora vou criar uma authentication customizada, e prover os dados manualmente
+
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
 
