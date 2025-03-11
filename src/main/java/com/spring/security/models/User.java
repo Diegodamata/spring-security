@@ -21,6 +21,8 @@ public class User {
 
     private String password;
 
+    private String email;
+
     @Type(ListArrayType.class) //hypersistence serve para fazer a conversão de list para array para ser armazenado no banco
     @Column(name = "roles", columnDefinition = "varchar[]")
     private List<String> roles;

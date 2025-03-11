@@ -1,6 +1,7 @@
 package com.spring.security.config;
 
 import com.spring.security.security.CustomUserDetailsService;
+import com.spring.security.security.LoginSocialSuccessHendler;
 import com.spring.security.services.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +15,6 @@ import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -25,14 +25,14 @@ public class SecurityConfiguration {
     //configuração padrão que o spring fornece para autenticação
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception { //pode ocorrer um exception
+    public SecurityFilterChain securityFilterChain(HttpSecurity security, LoginSocialSuccessHendler successHendler) throws Exception { //pode ocorrer um exception
 
         return security
                 .csrf(AbstractHttpConfigurer::disable) //desativando o csrf(Cross-Site Request Forgery) spring gera um token csrf e é envidado para cada requisição, assim evitando requisições indevidas
-//                .formLogin(configurer ->{ //agora não sera mais o login padrão do spring security
-//                    configurer.loginPage("/login").permitAll(); //criei um login proprio para autenticação, permito que todos tenha acesso
-//                })
-                .formLogin(Customizer.withDefaults()) //login padrão do security ja add automaticamente o oauth2
+                .formLogin(configurer ->{ //agora não sera mais o login padrão do spring security
+                    configurer.loginPage("/login").permitAll(); //criei um login proprio para autenticação, permito que todos tenha acesso
+                })
+//                .formLogin(Customizer.withDefaults()) //login padrão do security ja add automaticamente o oauth2
                 .httpBasic(Customizer.withDefaults()) // para fazer a autenticação atraves de um outro servidor ex(Postman)
                 .authorizeHttpRequests(authorize -> { //autorizando as requisições
 
@@ -41,7 +41,12 @@ public class SecurityConfiguration {
                     authorize.requestMatchers(HttpMethod.POST, "/users/**").permitAll();
                     authorize.anyRequest().authenticated(); //as requisições so será permitida acessar se as pessoas estiverem autenticadas
                 })
-                .oauth2Login(Customizer.withDefaults()) //adicionando o oauth2
+//                .oauth2Login(Customizer.withDefaults()) //adicionando o oauth2 um liink do google para authentication
+                .oauth2Login(oauth -> { //criando manualmente uma classe que renderiza o sucesso de altenticação com o google
+                    oauth
+                            .loginPage("/login") //tanto formLogin como oauth loginPage precisa esta apontando para a mesma pagina
+                            .successHandler(successHendler); //quando fizer a autenticação com sucesso com o google, ira chamar a classe que passei no metodo
+                })
                 .build();
     }
 
