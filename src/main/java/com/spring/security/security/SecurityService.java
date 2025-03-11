@@ -16,12 +16,23 @@ public class SecurityService {
 
     //metodo que retorna o usuario logado no momento
 
+    //como não estou utilizando mais o UserDetails não ira funcinar
+
     public User userLogado(){
 
         //obtem os dados do usuario autenticado no momento
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        UserDetails userDetails = (UserDetails) authentication.getPrincipal(); //o usuario logado é um userDetails vai receber a authentication.getPrincipal() que é os dados do usuario logado
+//        String login = userDetails.getUsername();
+//        return userService.findByLogin(login);
+
+
+        //dessa forma fica mais simples como a gente ja tem um altenticarion customizado
+        //so verifico se é uma instancia da da classe customizada de authentication que criei
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal(); //o usuario logado é um userDetails vai receber a authentication.getPrincipal() que é os dados do usuario logado
-        String login = userDetails.getUsername();
-        return userService.findByLogin(login);
+        if (authentication instanceof CustomAuthentication customAuth){
+            return customAuth.getUser();
+        }
+        return null;
     }
 }

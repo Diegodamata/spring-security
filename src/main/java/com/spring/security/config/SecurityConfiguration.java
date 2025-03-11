@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -60,5 +61,16 @@ public class SecurityConfiguration {
     public UserDetailsService userDetailsService(UserService userService){
 
         return new CustomUserDetailsService(userService); //utilizando UserDetailsService customizado, recebendo uma dependencia de service
+    }
+
+
+
+    //o spring no authenication para o roles por padrão é configurado
+    //para colocar prefixo nos roles por exemplo: "ROLE_GERENTE"
+    //podendo gerar um erro de não autorizado
+    //para eliminar esse prefixo
+    @Bean
+    public GrantedAuthorityDefaults grantedAuthorityDefaults(){
+        return new GrantedAuthorityDefaults(""); //deixo uma string vazia assim elimina o prefixo
     }
 }
