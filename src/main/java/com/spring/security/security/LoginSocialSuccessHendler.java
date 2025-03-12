@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.List;
 
 //criando uma classe de implementação do AuthenticationSuccessHandler
 //para que a authenticação qua esta vindo do google que é uma AuthenticationSuccessHandler
@@ -24,6 +25,8 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class LoginSocialSuccessHendler extends SavedRequestAwareAuthenticationSuccessHandler { //classe que implementa a interface AuthenticationSuccessHandler
+
+    private static final String SENHA_PADRAO = "321"; // uma senha padrão para esse usuario, porem quando utilizamos o google é o email que inporta
 
     private final UserService userService;
 
@@ -44,10 +47,32 @@ public class LoginSocialSuccessHendler extends SavedRequestAwareAuthenticationSu
 
         User userEncontrado = userService.findByEmail(email); //busco no banco o usuario com esse email especifico
 
+        //para autenticar um usuario, ele precisa estar cadastrado no banco, e se no primeiro cadastro do usuario ele ja se cadastrar com o google
+        //essa é uma das formar para autenticar o usuario
+        //crio um usuario novo com base no email dele do google e salvo esse usuario no banco
+        if(userEncontrado == null){
+            cadastrarUsuarioNaBase(email);
+        }
+
         authentication = new CustomAuthentication(userEncontrado); //e passo esse usuario para a minha classe de autenticação customizada, para se autenticar
 
         SecurityContextHolder.getContext().setAuthentication(authentication); //e eu set o context da minha authentication para que seja do tipo CustomAuthentication
 
         super.onAuthenticationSuccess(request, response, authentication); //e eu passo para a minha super classe as resposta
+    }
+
+    private void cadastrarUsuarioNaBase(String email) {
+        User user = new User();
+        user.setLogin(obterLoginApartirDoEmail(email));
+        user.setEmail(email);
+        user.setPassword(SENHA_PADRAO);
+        user.setRoles(List.of("OPERADOR"));
+
+        userService.created(user);
+    }
+
+    private String obterLoginApartirDoEmail(String email) {
+        return email.substring(0, email.indexOf("@")); //var cortar o email do inicio que é 0 ate o indexOf("@") ate a letra antes do arroba
+                                                        //ex: pessoa@gmail.com pegara do 0 ate  a letra antes do @
     }
 }
