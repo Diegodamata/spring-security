@@ -13,8 +13,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -47,15 +47,10 @@ public class SecurityConfiguration {
                             .loginPage("/login") //tanto formLogin como oauth loginPage precisa esta apontando para a mesma pagina
                             .successHandler(successHendler); //quando fizer a autenticação com sucesso com o google, ira chamar a classe que passei no metodo
                 })
+                .oauth2ResourceServer(oauth2RS ->
+                        oauth2RS.jwt(Customizer.withDefaults())) //informando que a minha aplicação só aceitara token jwt para autenticação
                 .build();
     }
-
-    //um bean que retorna a senha codificada
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
-
 
     //criando um user details service para buscar usuario no banco
 
@@ -77,5 +72,19 @@ public class SecurityConfiguration {
     @Bean
     public GrantedAuthorityDefaults grantedAuthorityDefaults(){
         return new GrantedAuthorityDefaults(""); //deixo uma string vazia assim elimina o prefixo
+    }
+
+    //os token ele tembem por padrão tem um prefixo que é o SCOPE_
+    //igual o bean de cima com o ROLE_ para poder eliminar o prefixc
+    //preciso criar esse bean, para converter o token remomento o prefixo
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter(){
+        var authoritiesConverter = new JwtGrantedAuthoritiesConverter(); //crio uma instancia de JwtGrantedAuthoritiesConverter onde contem o metodo para auterar o prefixo
+        authoritiesConverter.setAuthorityPrefix(""); //acesso o metodo setAuthorityPrefix e deixo uma string vazia para eliminar o prefixo SCOPE_
+
+        var converter = new JwtAuthenticationConverter(); //crio uma instancia de JwtAuthenticationConverter pois o meu bean retorna um objeto desse tipo
+        converter.setJwtGrantedAuthoritiesConverter(authoritiesConverter); //chamo o metodo setJwtGrantedAuthoritiesConverterpara definir que o tipo de converção será o que a gente definiu acima
+
+        return converter;
     }
 }

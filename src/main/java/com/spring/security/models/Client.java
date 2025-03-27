@@ -21,7 +21,5 @@ public class Client {
     private String redirectURI;
 
     private String scope;
-
-
 }
 
