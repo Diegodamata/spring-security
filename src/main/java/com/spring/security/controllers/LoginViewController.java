@@ -4,6 +4,7 @@ import com.spring.security.security.CustomAuthentication;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller //como não é uma requisição http, uso o controller que renderiza paginas web
@@ -22,5 +23,11 @@ public class LoginViewController {
             System.out.println(customAuth.getName());
         }
         return "Olá" + authentication.getName();
+    }
+
+    @GetMapping("/authorized")
+    @ResponseBody
+    public String obterCodigoDeAcesso(@RequestParam("code") String code){
+        return "Código de autorização: " + code;
     }
 }

@@ -45,10 +45,12 @@ public class AuthorizationServerConfiguration {
         OAuth2AuthorizationServerConfigurer authorizationServerConfigurer =
                 OAuth2AuthorizationServerConfigurer.authorizationServer();
 
-        http
+        http  //oAuth2AuthorizationServerConfigurer.getEndpointsMatcher() retorna um matcher que identifica quais endpoints pertencem ao Authorization Server.
+            // securityMatcher(...) assegura que as regras de segurança (como autenticação e autorização) sejam aplicadas apenas a esses endpoints.
+
                 .securityMatcher(authorizationServerConfigurer.getEndpointsMatcher()) //estamos dizendo que esta configuração só será aplicada aos endpoints do Authorization Server (como /oauth2/token, /oauth2/authorize, /logout, etc.).
                 .with(authorizationServerConfigurer, (authorizationServer) ->
-                        authorizationServer
+                        authorizationServer //OIDC é uma camada sobre o OAuth 2.0 que adiciona identidade ao protocolo, permitindo que clientes obtenham informações sobre usuários autenticados.
                                 .oidc(Customizer.withDefaults())	//  Ativa suporte a OpenID Connect (OIDC), que é uma extensão do OAuth2 para autenticação de usuários.
                 )
                 .oauth2ResourceServer(
@@ -74,6 +76,7 @@ public class AuthorizationServerConfiguration {
                 .accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED) //O OAuth2TokenFormat.SELF_CONTAINED no Spring Authorization Server define que os tokens de acesso serão autocontidos,
                 // ou seja, tokens JWT (JSON Web Tokens). Isso significa que toda a informação necessária para validação está dentro do próprio token, sem precisar consultar um banco de dados ou cache externo.
                 .accessTokenTimeToLive(Duration.ofMinutes(60)) //informando o tempo de duração desse token na sessao
+                .refreshTokenTimeToLive(Duration.ofMinutes(90)) //refresh token precisa ser maior que o access token, pois o access token ira trazer o refresh token e do refresh token eu gero um novo access token para a sessao do usuario
                 .build();
     }
 

@@ -30,7 +30,7 @@ public class SecurityConfiguration {
         return security
                 .csrf(AbstractHttpConfigurer::disable) //desativando o csrf(Cross-Site Request Forgery) spring gera um token csrf e é envidado para cada requisição, assim evitando requisições indevidas
                 .formLogin(configurer ->{ //agora não sera mais o login padrão do spring security
-                    configurer.loginPage("/login").permitAll(); //criei um login proprio para autenticação, permito que todos tenha acesso
+                    configurer.loginPage("/login"); //criei um login proprio para autenticação, permito que todos tenha acesso
                 })
 //                .formLogin(Customizer.withDefaults()) //login padrão do security ja add automaticamente o oauth2
                 .httpBasic(Customizer.withDefaults()) // para fazer a autenticação atraves de um outro servidor ex(Postman)
