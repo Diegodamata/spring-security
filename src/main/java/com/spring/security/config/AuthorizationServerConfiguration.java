@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
@@ -119,5 +120,20 @@ public class AuthorizationServerConfiguration {
     public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource){ //passo para o JwtDecoder onde esta a minha fonte de chaves
         return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource); //Usa a classe OAuth2AuthorizationServerConfiguration para criar um JwtDecoder baseado no jwkSource.
         // Esse decoder será usado para validar tokens JWT, verificando sua assinatura com a chave RSA.
+    }
+
+    //bean para voce custominar os endpoints do oauth2
+    //todos esses endpoints é o padrão, porem eu poso definir de outro jeito
+    @Bean
+    public AuthorizationServerSettings authorizationServerSettings(){
+        return AuthorizationServerSettings.builder()
+                .tokenEndpoint("/oauth2/token") //medoto que define a url onde o token sera enviado, por padrão (/oauth2/token)
+                .tokenIntrospectionEndpoint("/oauth2/introspect") //metodo que define a url para obter as informações do token como status etc.., padrão(/oauth2/introspect)
+                .tokenRevocationEndpoint("/oauth2/revoke") //metodo que define a url para revogar o token, invalidar um token
+                .authorizationEndpoint("/oauth2/authorize") //metodo que define a url para autorização, para o usuario informar seus dados para autenticação
+                .oidcUserInfoEndpoint("/oauth2/userinfo")//não é muito usado, mas é uma metodo do Open ID Connect para obter informações do usuario autenticado
+                .jwkSetEndpoint("/oauth2/jwks")//metodo para obter a chave public para verificar a assinatura do token
+                .oidcLogoutEndpoint("/oauth2/logout") //metodo para definir uma url de logout
+                .build();
     }
 }
