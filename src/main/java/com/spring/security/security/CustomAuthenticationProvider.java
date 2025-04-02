@@ -5,6 +5,7 @@ import com.spring.security.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -64,3 +65,4 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         //essa classe tambem é uma implementação de Authentication, e é essa classe que sera passada no authenticate
     }
 }
+

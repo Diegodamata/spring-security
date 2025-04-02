@@ -1,6 +1,7 @@
 package com.spring.security.config;
 
 import com.spring.security.security.CustomUserDetailsService;
+import com.spring.security.security.JwtCustomAuthenticationFilter;
 import com.spring.security.security.LoginSocialSuccessHendler;
 import com.spring.security.services.UserService;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +16,7 @@ import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -25,7 +27,9 @@ public class SecurityConfiguration {
     //configuração padrão que o spring fornece para autenticação
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity security, LoginSocialSuccessHendler successHendler) throws Exception { //pode ocorrer um exception
+    public SecurityFilterChain securityFilterChain(HttpSecurity security,
+                                                   LoginSocialSuccessHendler successHendler,
+                                                   JwtCustomAuthenticationFilter jwtCustomAuthenticationFilter) throws Exception { //pode ocorrer um exception
 
         return security
                 .csrf(AbstractHttpConfigurer::disable) //desativando o csrf(Cross-Site Request Forgery) spring gera um token csrf e é envidado para cada requisição, assim evitando requisições indevidas
@@ -49,6 +53,7 @@ public class SecurityConfiguration {
                 })
                 .oauth2ResourceServer(oauth2RS ->
                         oauth2RS.jwt(Customizer.withDefaults())) //informando que a minha aplicação só aceitara token jwt para autenticação
+                .addFilterAfter(jwtCustomAuthenticationFilter, BearerTokenAuthenticationFilter.class)
                 .build();
     }
 
