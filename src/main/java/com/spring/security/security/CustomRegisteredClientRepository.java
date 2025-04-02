@@ -56,7 +56,7 @@ public class CustomRegisteredClientRepository implements RegisteredClientReposit
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC) //para informar qual a forma que o clietn vai se autenticar, atraves do metodo basico que informa client e secret
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE) //informo o tipo de concessao para eutenticação, que é o autorization code
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS) //e o tipo de concessao client_credentials que é de api para api, ex: postman
-                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN) //adicionario o grant typr de refresh token para informar, que essa aplicação ira usar o fluxo do refresh token
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN) //adicionar o grant type de refresh token para informar, que essa aplicação ira usar o fluxo do refresh token
                 .tokenSettings(tokenSettings) //configuração de token para informar o tempo de duração de um token
                 .clientSettings(clientSettings) //para informar que não vamos trabalhar com tela de concentimento
                 .build();
