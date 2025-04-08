@@ -9,8 +9,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -52,9 +54,26 @@ public class SecurityConfiguration {
                             .successHandler(successHendler); //quando fizer a autenticação com sucesso com o google, ira chamar a classe que passei no metodo
                 })
                 .oauth2ResourceServer(oauth2RS ->
-                        oauth2RS.jwt(Customizer.withDefaults())) //informando que a minha aplicação só aceitara token jwt para autenticação
+                        oauth2RS.jwt(Customizer.withDefaults()))     //informando que a minha aplicação só aceitara token jwt para autenticação
                 .addFilterAfter(jwtCustomAuthenticationFilter, BearerTokenAuthenticationFilter.class)
                 .build();
+    }
+
+
+    //Configurando a segurança na web, para desabilitar o swagger
+    //todas as urls adicionada aqui serão iginorados no filtro de segurança não ira ne passar
+    //diferente do pormiteAll que ainda assim passa pelo filtro
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer(){
+        return web -> { web.ignoring().requestMatchers(
+                    "/v2/api-docs/**",
+                    "/v3/api-docs/**",
+                    "/swagger-resources/**",
+                    "/swagger-ui.html",
+                    "/swagger-ui/**",
+                    "/webjars/**"
+            );
+        };
     }
 
     //criando um user details service para buscar usuario no banco

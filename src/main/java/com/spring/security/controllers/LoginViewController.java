@@ -15,7 +15,6 @@ public class LoginViewController {
         return "login"; //vai retornar o nome do arquivo sem a extensão .html
     }
 
-
     @GetMapping("/")
     @ResponseBody //agora a authentication que esta vindo google, é uma instancia de CustomAuthentication
     public String paginaHome(Authentication authentication){ //Authentication para pegar a pessoa que esta logada e autenticada
