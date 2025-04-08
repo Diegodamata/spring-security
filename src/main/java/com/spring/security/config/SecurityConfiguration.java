@@ -39,7 +39,6 @@ public class SecurityConfiguration {
                     configurer.loginPage("/login"); //criei um login proprio para autenticação, permito que todos tenha acesso
                 })
 //                .formLogin(Customizer.withDefaults()) //login padrão do security ja add automaticamente o oauth2
-                .httpBasic(Customizer.withDefaults()) // para fazer a autenticação atraves de um outro servidor ex(Postman)
                 .authorizeHttpRequests(authorize -> { //autorizando as requisições
 
 
